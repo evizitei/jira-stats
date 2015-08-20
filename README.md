@@ -16,6 +16,7 @@ An analysis tool for getting some interesting metrics around your jira project
 2) build your config file
 
 `cp jirastats.gcfg.example jirastats.gcfg`
+
 `vim jirastats.gcfg`
 
 3) build your binary
