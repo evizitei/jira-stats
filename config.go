@@ -1,12 +1,12 @@
 package main
 
 import (
-  "code.google.com/p/gcfg"
-  "github.com/evizitei/jira-stats/jira"
+	"code.google.com/p/gcfg"
+	"github.com/evizitei/jira-stats/jira"
 )
 
 type Config struct {
-  Jira jira.JiraClientConfig
+	Jira jira.JiraClientConfig
 }
 
 func LoadConfig() (Config, error) {
