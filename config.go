@@ -7,6 +7,7 @@ type Config struct {
 		Username string
 		Password string
     Subdomain string
+    Project string
 	}
 }
 
