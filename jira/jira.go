@@ -11,6 +11,7 @@ type IssueFields struct {
 
 type Issue struct {
   Id string `json:"id"`
+  Key string `json:"key"`
   Field IssueFields `json:"fields"`
 }
 

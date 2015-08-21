@@ -23,25 +23,12 @@ func cycleTime(c *cli.Context){
 		return
 	}
 
-  var summedCycleTime float64
-  var maxCycleTime float64
-  summedCycleTime = 0
-  maxCycleTime = 0
-  issueCount := result.Total
-  for _, issue := range result.Issues {
-    cycleTime := issue.Field.Resolved.Sub(issue.Field.Created.Time).Hours()
-    if cycleTime > maxCycleTime {
-      maxCycleTime = cycleTime
-    }
-    summedCycleTime += cycleTime
-  }
-  averageCycleTime := summedCycleTime / float64(issueCount)
-
+  average, max := jira.CalculateCycleTime(result)
   println(fmt.Sprintf("Project: %s", config.Jira.Project))
   println(fmt.Sprintf("Username: %s", config.Jira.Username))
   println(fmt.Sprintf("%d total issues resolved", result.Total))
-  println(fmt.Sprintf("average cycle time: %f hours", averageCycleTime))
-  println(fmt.Sprintf("max cycle time: %f hours", maxCycleTime))
+  println(fmt.Sprintf("average cycle time: %f hours", average))
+  println(fmt.Sprintf("max cycle time: %f hours", max))
 }
 
 func main() {
