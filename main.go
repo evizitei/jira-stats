@@ -8,32 +8,17 @@ import (
   "encoding/json"
   "encoding/base64"
   "github.com/codegangsta/cli"
-  "github.com/simplereach/timeutils"
+  "github.com/evizitei/jira-stats/jira"
 )
-
-type IssueFields struct {
-  Created timeutils.Time `json:"created"`
-  Resolved timeutils.Time `json:"resolutiondate"`
-}
-
-type Issue struct {
-  Id string `json:"id"`
-  Field IssueFields `json:"fields"`
-}
-
-type SearchResult struct {
-	Total     int    `json:"total"`
-	Issues    []Issue `json:"issues"`
-}
-
 
 func cycleTime(c *cli.Context){
   config, cnfErr := LoadConfig()
 	if cnfErr != nil {
-		println("Configuration Error:", cnfErr)
+		println("Configuration Error:", cnfErr.Error())
 		return
 	}
-  jql := fmt.Sprintf("project=%s AND status=Closed AND resolutiondate >= -7d", config.Jira.Project)
+  jiraClient := jira.Client{ Config: config.Jira }
+  jql := jiraClient.RecentlyClosedJql()
   var Url *url.URL
   host := fmt.Sprintf("https://%s.atlassian.net", config.Jira.Subdomain)
   Url, err := url.Parse(host)
@@ -69,7 +54,7 @@ func cycleTime(c *cli.Context){
 	}
 
   defer response.Body.Close()
-	var result SearchResult
+	var result jira.SearchResult
 	jsonErr := json.NewDecoder(response.Body).Decode(&result)
   if jsonErr != nil {
 		println("API Response Parsing Error:", jsonErr.Error())

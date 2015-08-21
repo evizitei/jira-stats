@@ -26,3 +26,10 @@ An analysis tool for getting some interesting metrics around your jira project
 4) run your command
 
 `./jira-stats cycle-time`
+
+## Running Tests
+
+once you've pulled down the repo, package tests for the jira client package
+can be run with:
+
+`go test github.com/evizitei/jira-stats/jira`
