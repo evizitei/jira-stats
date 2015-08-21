@@ -4,6 +4,7 @@ import (
   "fmt"
   "net/url"
   "encoding/base64"
+  "encoding/json"
 )
 
 type JiraClientConfig struct {
@@ -42,4 +43,23 @@ func (c *Client) AuthorizationHeader() string {
   authString := fmt.Sprintf("%s:%s", c.Config.Username, c.Config.Password)
   encodedString := base64.StdEncoding.EncodeToString([]byte(authString))
   return fmt.Sprintf("Basic %s", encodedString)
+}
+
+func (c *Client) QueryRecentlyClosedIssues(api Api, result *SearchResult) error {
+  headers := map[string]string{
+    "Content-Type": "application/json",
+    "Authorization": c.AuthorizationHeader(),
+  }
+  responseBody, err := api.Fetch(c.IssueSearchUrl(), headers)
+  println("REsponse body is", responseBody)
+  if err != nil {
+    println("Could not get result:", err.Error())
+    return err
+  }
+  jsonErr := json.Unmarshal(responseBody, result)
+  if jsonErr != nil {
+    println("Failed to parse JSON response:", jsonErr.Error())
+    return jsonErr
+  }
+  return nil
 }

@@ -3,8 +3,6 @@ package main
 import (
   "os"
   "fmt"
-  "net/http"
-  "encoding/json"
   "github.com/codegangsta/cli"
   "github.com/evizitei/jira-stats/jira"
 )
@@ -15,36 +13,15 @@ func cycleTime(c *cli.Context){
 		println("Configuration Error:", cnfErr.Error())
 		return
 	}
-  jiraClient := jira.Client{ Config: config.Jira }
-  url := jiraClient.IssueSearchUrl()
-  authHeader := jiraClient.AuthorizationHeader()
-  client := &http.Client{}
-  request, err := http.NewRequest("GET", url, nil)
-  if err != nil {
-		println("Request Building Error:", err)
-		return
-	}
-  request.Header.Add("Content-Type", "application/json")
-  request.Header.Add("Authorization", authHeader)
 
   println("Checking data for last 7 days...")
-
-
-  response, err := client.Do(request)
-  if err != nil {
-		println("API Connection Error:", err)
-		return
-	}
-
-  defer response.Body.Close()
+  jiraClient := jira.Client{ Config: config.Jira }
+  api := jira.HttpApi{}
 	var result jira.SearchResult
-	jsonErr := json.NewDecoder(response.Body).Decode(&result)
-  if jsonErr != nil {
-		println("API Response Parsing Error:", jsonErr.Error())
+  err := jiraClient.QueryRecentlyClosedIssues(api, &result)
+  if err != nil {
 		return
 	}
-
-
 
   var summedCycleTime float64
   var maxCycleTime float64

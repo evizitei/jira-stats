@@ -41,3 +41,26 @@ func TestAuthorizationHeaderConstruction(t *testing.T) {
     t.Error("Expected Valid Auth Header:", header)
   }
 }
+
+var apiResponse []byte = []byte(`{"total":2,"issues":[{"id":"103220","fields": {"customfield_15000":null,"created":"2015-08-19T13:23:00.000-0600","resolutiondate":"2015-08-20T16:13:50.000-0600"}},{"id":"99686","fields":{"customfield_15000":null,"created":"2015-07-20T12:43:42.000-0600","resolutiondate":"2015-08-20T16:39:03.000-0600"}}]}`)
+
+type stubApi struct{}
+func (api stubApi) Fetch(url string, headers map[string]string) ([]byte, error){
+  return apiResponse, nil
+}
+
+func TestTranslatingJsonResponseToSearchResult(t *testing.T) {
+  config := JiraClientConfig{
+    Project: "MyJiraProject",
+    Subdomain: "companyname",
+    Username: "Admin",
+    Password: "Secret",
+  }
+  client := Client{ Config: config }
+  var stub stubApi
+  var result SearchResult
+  client.QueryRecentlyClosedIssues(stub, &result)
+  if result.Total != 2 {
+    t.Error("JSON not parsed correctly:", result)
+  }
+}
