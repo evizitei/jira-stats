@@ -29,3 +29,15 @@ func TestBuildingSearchUrl(t *testing.T) {
     t.Error("Expected valid JIRA URL: ", url)
   }
 }
+
+func TestAuthorizationHeaderConstruction(t *testing.T) {
+  config := JiraClientConfig{
+    Username: "Admin",
+    Password: "Secret",
+  }
+  client := Client{ Config: config }
+  header := client.AuthorizationHeader()
+  if header != "Basic QWRtaW46U2VjcmV0" {
+    t.Error("Expected Valid Auth Header:", header)
+  }
+}

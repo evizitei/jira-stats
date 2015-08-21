@@ -5,7 +5,6 @@ import (
   "fmt"
   "net/http"
   "encoding/json"
-  "encoding/base64"
   "github.com/codegangsta/cli"
   "github.com/evizitei/jira-stats/jira"
 )
@@ -18,9 +17,7 @@ func cycleTime(c *cli.Context){
 	}
   jiraClient := jira.Client{ Config: config.Jira }
   url := jiraClient.IssueSearchUrl()
-
-  authString := fmt.Sprintf("%s:%s", config.Jira.Username, config.Jira.Password)
-  authHeader := fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(authString)))
+  authHeader := jiraClient.AuthorizationHeader()
   client := &http.Client{}
   request, err := http.NewRequest("GET", url, nil)
   if err != nil {

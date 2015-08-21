@@ -3,6 +3,7 @@ package jira
 import (
   "fmt"
   "net/url"
+  "encoding/base64"
 )
 
 type JiraClientConfig struct {
@@ -35,4 +36,10 @@ func (c *Client) IssueSearchUrl() string {
   parameters.Add("maxResults", "500")
   jiraUrl.RawQuery = parameters.Encode()
   return jiraUrl.String()
+}
+
+func (c *Client) AuthorizationHeader() string {
+  authString := fmt.Sprintf("%s:%s", c.Config.Username, c.Config.Password)
+  encodedString := base64.StdEncoding.EncodeToString([]byte(authString))
+  return fmt.Sprintf("Basic %s", encodedString)
 }
