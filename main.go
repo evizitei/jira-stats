@@ -4,7 +4,6 @@ import (
   "os"
   "fmt"
   "net/http"
-  "net/url"
   "encoding/json"
   "encoding/base64"
   "github.com/codegangsta/cli"
@@ -18,20 +17,7 @@ func cycleTime(c *cli.Context){
 		return
 	}
   jiraClient := jira.Client{ Config: config.Jira }
-  jql := jiraClient.RecentlyClosedJql()
-  var Url *url.URL
-  host := fmt.Sprintf("https://%s.atlassian.net", config.Jira.Subdomain)
-  Url, err := url.Parse(host)
-  if err != nil {
-		println("URL Parsing Error:", err)
-		return
-	}
-  Url.Path += "/rest/api/2/search"
-  parameters := url.Values{}
-  parameters.Add("jql", jql)
-  parameters.Add("maxResults", "500")
-  Url.RawQuery = parameters.Encode()
-  url := Url.String()
+  url := jiraClient.IssueSearchUrl()
 
   authString := fmt.Sprintf("%s:%s", config.Jira.Username, config.Jira.Password)
   authHeader := fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(authString)))
