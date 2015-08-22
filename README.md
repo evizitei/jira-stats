@@ -23,7 +23,11 @@ An analysis tool for getting some interesting metrics around your jira project
 
 `go build`
 
-4) run your command
+4) see what commands are available
+
+`./jira-stats`
+
+5) run your command
 
 `./jira-stats cycle-time`
 
