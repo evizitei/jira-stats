@@ -21,25 +21,25 @@ type SearchResult struct {
 }
 
 type IssueChangeItem struct {
-  Field string `json:"field"`
-  FieldType string `json:"fieldtype"`
-  From string `json:"fromString"`
-  To string `json:"toString"`
+	Field     string `json:"field"`
+	FieldType string `json:"fieldtype"`
+	From      string `json:"fromString"`
+	To        string `json:"toString"`
 }
 
 type IssueChange struct {
-  Id string `json:"id"`
-  Created timeutils.Time `json:"created"`
-  Items []IssueChangeItem `json:"items"`
+	Id      string            `json:"id"`
+	Created timeutils.Time    `json:"created"`
+	Items   []IssueChangeItem `json:"items"`
 }
 
 type Changelog struct {
-  Total int `json:"total"`
-  Histories []IssueChange `json:"histories"`
+	Total     int           `json:"total"`
+	Histories []IssueChange `json:"histories"`
 }
 
 type IssueHistory struct {
-  Id string `json:"id"`
-  Key string `json:"key"`
-  Changelog Changelog `json:"changelog"`
+	Id        string    `json:"id"`
+	Key       string    `json:"key"`
+	Changelog Changelog `json:"changelog"`
 }

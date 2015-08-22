@@ -1,9 +1,9 @@
 package jira
 
 import (
-	"time"
-	"strings"
 	"errors"
+	"strings"
+	"time"
 )
 
 func cycleTimeForIssue(issue Issue) float64 {
@@ -13,7 +13,7 @@ func cycleTimeForIssue(issue Issue) float64 {
 }
 
 func findInProgressTime(changes []IssueChange) (time.Time, error) {
-  for _, issueChange := range changes {
+	for _, issueChange := range changes {
 		for _, changeItem := range issueChange.Items {
 			if changeItem.Field == "status" && changeItem.To == "In Progress" {
 				return issueChange.Created.Time, nil
@@ -26,10 +26,10 @@ func findInProgressTime(changes []IssueChange) (time.Time, error) {
 func findDeployTime(changes []IssueChange) (time.Time, error) {
 	for _, issueChange := range changes {
 		for _, changeItem := range issueChange.Items {
-			if changeItem.Field == "labels"{
-				if strings.Contains(changeItem.To, "deployed-production") && !strings.Contains(changeItem.From, "deployed-production"){
-				  return issueChange.Created.Time, nil
-			  }
+			if changeItem.Field == "labels" {
+				if strings.Contains(changeItem.To, "deployed-production") && !strings.Contains(changeItem.From, "deployed-production") {
+					return issueChange.Created.Time, nil
+				}
 			}
 		}
 	}
@@ -37,7 +37,7 @@ func findDeployTime(changes []IssueChange) (time.Time, error) {
 }
 
 func laptopToLiveForIssue(issue *IssueHistory) float64 {
-  startTime, err := findInProgressTime(issue.Changelog.Histories)
+	startTime, err := findInProgressTime(issue.Changelog.Histories)
 	if err != nil {
 		println("No start time found for ", issue.Key)
 		return 0.0
@@ -69,7 +69,7 @@ func CalculateCycleTime(result SearchResult) (float64, float64) {
 }
 
 func CalculateLaptopToLive(changelogs []*IssueHistory) (float64, float64) {
-  var summedCycleTime float64
+	var summedCycleTime float64
 	var maxCycleTime float64
 	summedCycleTime = 0
 	maxCycleTime = 0
@@ -86,5 +86,5 @@ func CalculateLaptopToLive(changelogs []*IssueHistory) (float64, float64) {
 }
 
 func CalculateBugRatio(result SearchResult) float64 {
-  return 1.0
+	return 1.0
 }

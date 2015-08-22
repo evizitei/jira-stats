@@ -21,25 +21,25 @@ type Client struct {
 var apiBasePath string = "/rest/api/2"
 
 func (c *Client) buildJqlForProject(whereClause string) string {
-  baseJql := "project=%s AND %s"
+	baseJql := "project=%s AND %s"
 	project := c.Config.Project
 	return fmt.Sprintf(baseJql, project, whereClause)
 }
 
 func (c *Client) RecentlyClosedJql() string {
-  return c.buildJqlForProject("status=Closed AND resolutiondate >= -7d")
+	return c.buildJqlForProject("status=Closed AND resolutiondate >= -7d")
 }
 
 func (c *Client) RecentlyCreatedJql() string {
-  return c.buildJqlForProject("createdDate >= -7d")
+	return c.buildJqlForProject("createdDate >= -7d")
 }
 
 func (c *Client) RecentlyDeployedJql() string {
-  return c.buildJqlForProject("labels in (deployed-production) AND resolutiondate >= -42d")
+	return c.buildJqlForProject("labels in (deployed-production) AND resolutiondate >= -42d")
 }
 
 func (c *Client) jiraHostUrl() (*url.URL, error) {
-  host := fmt.Sprintf("https://%s.atlassian.net", c.Config.Subdomain)
+	host := fmt.Sprintf("https://%s.atlassian.net", c.Config.Subdomain)
 	jiraUrl, err := url.Parse(host)
 	if err != nil {
 		println("URL Parsing Error:", err.Error)
@@ -59,7 +59,7 @@ func (c *Client) IssueSearchUrl(jql string) string {
 }
 
 func (c *Client) IssueChangelogUrl(issueKey string) string {
-  jiraUrl, _ := c.jiraHostUrl()
+	jiraUrl, _ := c.jiraHostUrl()
 	jiraUrl.Path += fmt.Sprintf("%s/issue/%s", apiBasePath, issueKey)
 	parameters := url.Values{}
 	parameters.Add("expand", "changelog")
@@ -96,20 +96,20 @@ func (c *Client) queryIssues(api Api, result *SearchResult, jql string) error {
 }
 
 func (c *Client) QueryRecentlyClosedIssues(api Api, result *SearchResult) error {
-  return c.queryIssues(api, result, c.RecentlyClosedJql())
+	return c.queryIssues(api, result, c.RecentlyClosedJql())
 }
 
 func (c *Client) QueryRecentlyCreatedIssues(api Api, result *SearchResult) error {
-  return c.queryIssues(api, result, c.RecentlyCreatedJql())
+	return c.queryIssues(api, result, c.RecentlyCreatedJql())
 }
 
 func (c *Client) QueryRecentlyDeployedIssues(api Api, result *SearchResult) error {
-  return c.queryIssues(api, result, c.RecentlyDeployedJql())
+	return c.queryIssues(api, result, c.RecentlyDeployedJql())
 }
 
 func (c *Client) QueryChangelogsForResultSet(api Api, result *SearchResult) ([]*IssueHistory, error) {
-  changelogs := make([]*IssueHistory, len(result.Issues))
-  for i, issue := range result.Issues {
+	changelogs := make([]*IssueHistory, len(result.Issues))
+	for i, issue := range result.Issues {
 		issueUrl := c.IssueChangelogUrl(issue.Key)
 		responseBody, err := api.Fetch(issueUrl, c.apiHeaders())
 		if err != nil {

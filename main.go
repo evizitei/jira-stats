@@ -32,7 +32,7 @@ func cycleTime(c *cli.Context) {
 }
 
 func laptopToLive(c *cli.Context) {
-  config, cnfErr := LoadConfig()
+	config, cnfErr := LoadConfig()
 	if cnfErr != nil {
 		println("Configuration Error:", cnfErr.Error())
 		return
@@ -41,9 +41,9 @@ func laptopToLive(c *cli.Context) {
 	println("Checking data for last 6 weeks...")
 	jiraClient := jira.Client{Config: config.Jira}
 	api := jira.HttpApi{}
-  var result jira.SearchResult
+	var result jira.SearchResult
 	err := jiraClient.QueryRecentlyDeployedIssues(api, &result)
-  changelogs, err := jiraClient.QueryChangelogsForResultSet(api, &result)
+	changelogs, err := jiraClient.QueryChangelogsForResultSet(api, &result)
 	average, max := jira.CalculateLaptopToLive(changelogs)
 	if err != nil {
 		return
@@ -56,7 +56,7 @@ func laptopToLive(c *cli.Context) {
 }
 
 func bugRatio(c *cli.Context) {
-  config, cnfErr := LoadConfig()
+	config, cnfErr := LoadConfig()
 	if cnfErr != nil {
 		println("Configuration Error:", cnfErr.Error())
 		return
@@ -66,17 +66,17 @@ func bugRatio(c *cli.Context) {
 	jiraClient := jira.Client{Config: config.Jira}
 	api := jira.HttpApi{}
 
-  var result jira.SearchResult
+	var result jira.SearchResult
 	err := jiraClient.QueryRecentlyCreatedIssues(api, &result)
 	if err != nil {
 		return
 	}
 
 	bugsOverFeatures := jira.CalculateBugRatio(result)
-  println(fmt.Sprintf("Project: %s", config.Jira.Project))
+	println(fmt.Sprintf("Project: %s", config.Jira.Project))
 	println(fmt.Sprintf("Username: %s", config.Jira.Username))
-  println(fmt.Sprintf("%d total issues resolved", result.Total))
-  println(fmt.Sprintf("bug ratio: %f", bugsOverFeatures))
+	println(fmt.Sprintf("%d total issues resolved", result.Total))
+	println(fmt.Sprintf("bug ratio: %f", bugsOverFeatures))
 }
 
 func main() {
@@ -90,18 +90,18 @@ func main() {
 			Usage:   "Calculate how long it takes on average from ticket-entry to done",
 			Action:  cycleTime,
 		},
-    {
-      Name: "laptop-to-live",
-      Aliases: []string{"ltl"},
-      Usage: "Calculate cycle time for 'someone started' to 'on production'",
-      Action: laptopToLive,
-    },
-    {
-      Name: "bug-ratio",
-      Aliases: []string{"br"},
-      Usage: "give the ratio of bugs to feature tickets created",
-      Action: bugRatio,
-    },
+		{
+			Name:    "laptop-to-live",
+			Aliases: []string{"ltl"},
+			Usage:   "Calculate cycle time for 'someone started' to 'on production'",
+			Action:  laptopToLive,
+		},
+		{
+			Name:    "bug-ratio",
+			Aliases: []string{"br"},
+			Usage:   "give the ratio of bugs to feature tickets created",
+			Action:  bugRatio,
+		},
 	}
 	app.Run(os.Args)
 }
