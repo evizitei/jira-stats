@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/codegangsta/cli"
 	"github.com/evizitei/jira-stats/jira"
-	"os"
 )
 
 func cycleTime(c *cli.Context) {
@@ -76,7 +77,7 @@ func bugRatio(c *cli.Context) {
 	println(fmt.Sprintf("Project: %s", config.Jira.Project))
 	println(fmt.Sprintf("Username: %s", config.Jira.Username))
 	println(fmt.Sprintf("%d total issues resolved", result.Total))
-	println(fmt.Sprintf("bug ratio: %f", bugsOverFeatures))
+	println(fmt.Sprintf("bug ratio (bugs/features): %f", bugsOverFeatures))
 }
 
 func main() {

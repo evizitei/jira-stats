@@ -1,9 +1,10 @@
 package jira
 
 import (
-	"github.com/simplereach/timeutils"
 	"testing"
 	"time"
+
+	"github.com/simplereach/timeutils"
 )
 
 var start time.Time
@@ -15,18 +16,18 @@ func buildResult() SearchResult {
 	end1, _ = timeutils.ParseDateString("09:51:20.939152pm 2015-10-08")
 	end2, _ = timeutils.ParseDateString("09:51:20.939152pm 2015-12-08")
 
-	var searchResult SearchResult = SearchResult{
+	var searchResult = SearchResult{
 		Total: 2,
 		Issues: []Issue{
 			Issue{
-				Id: "12345",
+				ID: "12345",
 				Field: IssueFields{
 					Created:  timeutils.Time{Time: start},
 					Resolved: timeutils.Time{Time: end1},
 				},
 			},
 			Issue{
-				Id: "54321",
+				ID: "54321",
 				Field: IssueFields{
 					Created:  timeutils.Time{Time: start},
 					Resolved: timeutils.Time{Time: end2},
@@ -54,7 +55,7 @@ func TestCycleTimeMaxCalculation(t *testing.T) {
 
 func TestCycleTimeCalculation(t *testing.T) {
 	issue := Issue{
-		Id: "12345",
+		ID: "12345",
 		Field: IssueFields{
 			Created:  timeutils.Time{Time: start},
 			Resolved: timeutils.Time{Time: end1},

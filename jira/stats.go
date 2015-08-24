@@ -51,40 +51,62 @@ func laptopToLiveForIssue(issue *IssueHistory) float64 {
 	return duration.Hours()
 }
 
+func averageAndMax(values []float64) (average float64, max float64) {
+	var sum float64
+	count := len(values)
+	for _, val := range values {
+		if val > max {
+			max = val
+		}
+		sum += val
+	}
+	average = sum / float64(count)
+	return average, max
+}
+
+// CalculateCycleTime iterates over the issues in a search result
+//  from a JIRA api query and checks the created time and resolved time
+//  for each one, giving an average for how long it takes from getting a ticket
+//  filed to having the work on that ticket complete.  Lower numbers are better.
 func CalculateCycleTime(result SearchResult) (float64, float64) {
-	var summedCycleTime float64
-	var maxCycleTime float64
-	summedCycleTime = 0
-	maxCycleTime = 0
-	issueCount := result.Total
-	for _, issue := range result.Issues {
-		cycleTime := cycleTimeForIssue(issue)
-		if cycleTime > maxCycleTime {
-			maxCycleTime = cycleTime
-		}
-		summedCycleTime += cycleTime
+	cycleTimes := make([]float64, len(result.Issues))
+	for i, issue := range result.Issues {
+		cycleTimes[i] = cycleTimeForIssue(issue)
 	}
-	averageCycleTime := summedCycleTime / float64(issueCount)
-	return averageCycleTime, maxCycleTime
+	return averageAndMax(cycleTimes)
 }
 
+// CalculateLaptopToLive accepts an array of changelogs, one for each
+//  issue in a result set, and checks the label application times and
+//  start times of each one to figure out how long each issue takes to
+//  go from "work started" to "deployed to production".  The result is in numbers,
+//  lower numbers are better.
 func CalculateLaptopToLive(changelogs []*IssueHistory) (float64, float64) {
-	var summedCycleTime float64
-	var maxCycleTime float64
-	summedCycleTime = 0
-	maxCycleTime = 0
-	issueCount := len(changelogs)
-	for _, changelog := range changelogs {
-		cycleTime := laptopToLiveForIssue(changelog)
-		if cycleTime > maxCycleTime {
-			maxCycleTime = cycleTime
-		}
-		summedCycleTime += cycleTime
+	ltlTimes := make([]float64, len(changelogs))
+	for i, changelog := range changelogs {
+		ltlTimes[i] = laptopToLiveForIssue(changelog)
 	}
-	averageCycleTime := summedCycleTime / float64(issueCount)
-	return averageCycleTime, maxCycleTime
+	return averageAndMax(ltlTimes)
 }
 
+// CalculateBugRatio takes a SearchResult from a jira API query and
+//   counts the bugs and features in that set, then divides bugs
+//	 by features to get a ratio.  0.0 would be amazing.  < 1.0 means more features
+//	 then bugs.  > 1.0 means more bugs than features.
 func CalculateBugRatio(result SearchResult) float64 {
-	return 1.0
+	bugCount := 0
+	featureCount := 0
+	for _, issue := range result.Issues {
+		issueType := issue.Field.IssueType.Name
+		if issueType == "Bug" {
+			bugCount++
+		} else if issueType == "New Feature" {
+			featureCount++
+		}
+	}
+	if featureCount == 0 || bugCount == 0 {
+		println("Insufficient data to return a meaningful ratio")
+		return 0.0
+	}
+	return float64(bugCount / featureCount)
 }
