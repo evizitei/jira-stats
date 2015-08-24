@@ -5,24 +5,13 @@ import (
 	"testing"
 )
 
-func TestJqlInterpolation(t *testing.T) {
-	config := JiraClientConfig{
-		Project: "MyJiraProject",
-	}
-	client := Client{Config: config}
-	jql := client.RecentlyClosedJql()
-	if jql != "project=MyJiraProject AND status=Closed AND resolutiondate >= -7d" {
-		t.Error("Expected correct jql interpolation: ", jql)
-	}
-}
-
 func TestBuildingSearchUrl(t *testing.T) {
-	config := JiraClientConfig{
+	config := ClientConfig{
 		Project:   "MyJiraProject",
 		Subdomain: "companyname",
 	}
 	client := Client{Config: config}
-	url := client.IssueSearchUrl("JQL")
+	url := client.issueSearchURL("JQL")
 	queryString := "jql=JQL&maxResults=500"
 	expected := fmt.Sprintf("https://companyname.atlassian.net/rest/api/2/search?%s", queryString)
 	if url != expected {
@@ -31,12 +20,12 @@ func TestBuildingSearchUrl(t *testing.T) {
 }
 
 func TestAuthorizationHeaderConstruction(t *testing.T) {
-	config := JiraClientConfig{
+	config := ClientConfig{
 		Username: "Admin",
 		Password: "Secret",
 	}
 	client := Client{Config: config}
-	header := client.AuthorizationHeader()
+	header := client.authorizationHeader()
 	if header != "Basic QWRtaW46U2VjcmV0" {
 		t.Error("Expected Valid Auth Header:", header)
 	}
@@ -51,7 +40,7 @@ func (api stubAPI) Fetch(url string, headers map[string]string) ([]byte, error) 
 }
 
 func TestTranslatingJsonResponseToSearchResult(t *testing.T) {
-	config := JiraClientConfig{
+	config := ClientConfig{
 		Project:   "MyJiraProject",
 		Subdomain: "companyname",
 		Username:  "Admin",
@@ -60,7 +49,7 @@ func TestTranslatingJsonResponseToSearchResult(t *testing.T) {
 	client := Client{Config: config}
 	var stub stubAPI
 	var result SearchResult
-	client.QueryRecentlyClosedIssues(stub, &result)
+	client.QueryRecentlyClosedIssues(stub, "default", &result)
 	if result.Total != 2 {
 		t.Error("JSON not parsed correctly:", result)
 	}

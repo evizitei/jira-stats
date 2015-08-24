@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	Jira jira.JiraClientConfig
+	Jira jira.ClientConfig
 }
 
 func LoadConfig() (Config, error) {
