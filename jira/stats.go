@@ -64,6 +64,23 @@ func averageAndMax(values []float64) (average float64, max float64) {
 	return average, max
 }
 
+func bugRatio(issueTypes []string) float64 {
+	bugCount := 0
+	featureCount := 0
+	for _, issueType := range issueTypes {
+		if issueType == "Bug" {
+			bugCount++
+		} else if issueType == "New Feature" {
+			featureCount++
+		}
+	}
+	if featureCount == 0 || bugCount == 0 {
+		println("Insufficient data to return a meaningful ratio")
+		return 0.0
+	}
+	return float64(bugCount) / float64(featureCount)
+}
+
 // CalculateCycleTime iterates over the issues in a search result
 //  from a JIRA api query and checks the created time and resolved time
 //  for each one, giving an average for how long it takes from getting a ticket
@@ -94,19 +111,9 @@ func CalculateLaptopToLive(changelogs []*IssueHistory) (float64, float64) {
 //	 by features to get a ratio.  0.0 would be amazing.  < 1.0 means more features
 //	 then bugs.  > 1.0 means more bugs than features.
 func CalculateBugRatio(result SearchResult) float64 {
-	bugCount := 0
-	featureCount := 0
-	for _, issue := range result.Issues {
-		issueType := issue.Field.IssueType.Name
-		if issueType == "Bug" {
-			bugCount++
-		} else if issueType == "New Feature" {
-			featureCount++
-		}
+	issueTypes := make([]string, len(result.Issues))
+	for i, issue := range result.Issues {
+		issueTypes[i] = issue.Field.IssueType.Name
 	}
-	if featureCount == 0 || bugCount == 0 {
-		println("Insufficient data to return a meaningful ratio")
-		return 0.0
-	}
-	return float64(bugCount / featureCount)
+	return bugRatio(issueTypes)
 }

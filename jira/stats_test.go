@@ -66,3 +66,11 @@ func TestCycleTimeCalculation(t *testing.T) {
 		t.Error("expected good duration check", int(cycleTime))
 	}
 }
+
+func TestBugRatioDoesNotRound(t *testing.T) {
+	issueTypes := []string{"Bug", "Bug", "Bug", "New Feature", "New Feature"}
+	ratio := bugRatio(issueTypes)
+	if ratio != 1.5 {
+		t.Error("expected ratio not to round before dividing", ratio)
+	}
+}

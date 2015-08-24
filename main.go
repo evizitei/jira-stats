@@ -10,12 +10,11 @@ import (
 
 func getDateFlag(c *cli.Context, defaultMessage string) string {
 	val := c.GlobalString("date-range")
-	println("daterange param is", val)
-	if val == "" {
+	if val == "default" {
 		println("Checking data for", defaultMessage, "...")
-		return "default"
+	} else {
+		println("Checking data for", val, "...")
 	}
-	println("Checking data for", val, "...")
 	return val
 }
 
@@ -99,7 +98,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "date-range",
-			Value: "2015-08-09:2015-08-10",
+			Value: "default",
 			Usage: "Date range to check data, the default value is specific to each command but is rational.  Provided like \"YYYY-MM-DD:YYYY-MM-DD\" with the earlier date first.",
 		},
 	}
