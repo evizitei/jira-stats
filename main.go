@@ -8,6 +8,17 @@ import (
 	"github.com/evizitei/jira-stats/jira"
 )
 
+func getDateFlag(c *cli.Context, defaultMessage string) string {
+	val := c.GlobalString("date-range")
+	println("daterange param is", val)
+	if val == "" {
+		println("Checking data for", defaultMessage, "...")
+		return "default"
+	}
+	println("Checking data for", val, "...")
+	return val
+}
+
 func cycleTime(c *cli.Context) {
 	config, cnfErr := LoadConfig()
 	if cnfErr != nil {
@@ -15,13 +26,7 @@ func cycleTime(c *cli.Context) {
 		return
 	}
 
-	dateRange := c.String("date-range")
-	if dateRange == "default" {
-		println("Checking data for last 7 days...")
-	} else {
-		println("Checking data for", dateRange, "...")
-	}
-
+	dateRange := getDateFlag(c, "last 7 days")
 	jiraClient := jira.Client{Config: config.Jira}
 	api := jira.HttpApi{}
 	var result jira.SearchResult
@@ -45,13 +50,7 @@ func laptopToLive(c *cli.Context) {
 		return
 	}
 
-	dateRange := c.String("date-range")
-	if dateRange == "default" {
-		println("Checking data for last 6 weeks...")
-	} else {
-		println("Checking data for", dateRange, "...")
-	}
-
+	dateRange := getDateFlag(c, "last 6 weeks")
 	jiraClient := jira.Client{Config: config.Jira}
 	api := jira.HttpApi{}
 	var result jira.SearchResult
@@ -75,13 +74,7 @@ func bugRatio(c *cli.Context) {
 		return
 	}
 
-	dateRange := c.String("date-range")
-	if dateRange == "default" {
-		println("Checking data for last 7 days...")
-	} else {
-		println("Checking data for", dateRange, "...")
-	}
-
+	dateRange := getDateFlag(c, "last 7 days")
 	jiraClient := jira.Client{Config: config.Jira}
 	api := jira.HttpApi{}
 
@@ -105,9 +98,9 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "date-range, d",
-			Value: "default",
-			Usage: "Date range to check data, the default value is specific to each command but is rational.  Provided like 'YYYY-MM-DD:YYYY-MM-DD' with the earlier date first.",
+			Name:  "date-range",
+			Value: "2015-08-09:2015-08-10",
+			Usage: "Date range to check data, the default value is specific to each command but is rational.  Provided like \"YYYY-MM-DD:YYYY-MM-DD\" with the earlier date first.",
 		},
 	}
 

@@ -31,6 +31,10 @@ An analysis tool for getting some interesting metrics around your jira project
 
 `./jira-stats cycle-time`
 
+6) specify a date range if you like:
+
+`./jira-stats --date-range "2015-07-01:2015-07-15" bug-ratio`
+
 ## Running Tests
 
 once you've pulled down the repo, package tests for the jira client package
