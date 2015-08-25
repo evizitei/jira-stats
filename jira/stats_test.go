@@ -74,3 +74,11 @@ func TestBugRatioDoesNotRound(t *testing.T) {
 		t.Error("expected ratio not to round before dividing", ratio)
 	}
 }
+
+func TestAvgAndMaxDiscardsZeroResults(t *testing.T) {
+	times := []float64{2.0, 4.0, 6.0, 0.0}
+	avg, _ := averageAndMax(times)
+	if avg != 4 {
+		t.Error("expected to discard zeros", avg)
+	}
+}

@@ -39,12 +39,10 @@ func findDeployTime(changes []IssueChange) (time.Time, error) {
 func laptopToLiveForIssue(issue *IssueHistory) float64 {
 	startTime, err := findInProgressTime(issue.Changelog.Histories)
 	if err != nil {
-		println("No start time found for ", issue.Key)
 		return 0.0
 	}
 	liveTime, err := findDeployTime(issue.Changelog.Histories)
 	if err != nil {
-		println("No deploy time found for ", issue.Key)
 		return 0.0
 	}
 	duration := liveTime.Sub(startTime)
@@ -55,6 +53,9 @@ func averageAndMax(values []float64) (average float64, max float64) {
 	var sum float64
 	count := len(values)
 	for _, val := range values {
+		if val == 0.0 {
+			count--
+		}
 		if val > max {
 			max = val
 		}
