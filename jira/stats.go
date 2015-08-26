@@ -55,8 +55,7 @@ func averageAndMax(values []float64) (average float64, max float64) {
 	for _, val := range values {
 		if val == 0.0 {
 			count--
-		}
-		if val > max {
+		} else if val > max {
 			max = val
 		}
 		sum += val
